@@ -34,7 +34,11 @@ This defines ports on which application services will be exposed to other servic
 ```yaml
 ContainerPort:
   - envoyPort: 8799
+<<<<<<< HEAD
     idleTimeout: 
+=======
+    idleTimeout:
+>>>>>>> c3d0ab47845fc6ffa51f3ff908a02e9cd55366c9
     name: app
     port: 8080
     servicePort: 80
@@ -75,7 +79,7 @@ LivenessProbe:
   scheme: ""
   tcp: true
 ```
- 
+
 | Key | Description |
 | :--- | :--- |
 | `Path` | It define the path where the liveness needs to be checked. |
@@ -90,7 +94,7 @@ LivenessProbe:
 
 
 ### MaxUnavailable
- 
+
  ```yaml
   MaxUnavailable: 0
 ```
@@ -131,11 +135,11 @@ ReadinessProbe:
 
 | Key | Description |
 | :--- | :--- |
-| `Path` | It define the path where the rediness needs to be checked. |
+| `Path` | It define the path where the readiness needs to be checked. |
 | `failureThreshold` | It defines the maximum number of failures that are acceptable before a given container is not considered as ready. |
 | `initialDelaySeconds` | It defines the time to wait before a given container is checked for readiness. |
 | `periodSeconds` | It defines the time to check a given container for readiness. |
-| `successThreshold` | It defines the number of successes required before a given container is said to fulfil the rediness probe. |
+| `successThreshold` | It defines the number of successes required before a given container is said to fulfill the readiness probe. |
 | `timeoutSeconds` | It defines the time for checking timeout. |
 | `httpHeader` | Custom headers to set in the request. HTTP allows repeated headers,You can override the default headers by defining .httpHeaders for the probe. |
 | `scheme` | Scheme to use for connecting to the host (HTTP or HTTPS). Defaults to HTTP.
@@ -231,7 +235,7 @@ Specialized containers that run before app containers in a Pod. Init containers 
 ```yaml
 pauseForSecondsBeforeSwitchActive: 30
 ```
-To wait for given period of time before swith active the container.
+To wait for given period of time before switch active the container.
 
 ### Resources
 
@@ -240,11 +244,11 @@ These define minimum and maximum RAM and CPU available to the application.
 ```yaml
 resources:
   limits:
-    cpu: '1'
-    memory: 200Mi
+    cpu: "1"
+    memory: "200Mi"
   requests:
-    cpu: '0.10'
-    memory: 100Mi
+    cpu: "0.10"
+    memory: "100Mi"
 ```
 
 Resources are required to set CPU and memory usage.
@@ -474,7 +478,7 @@ serviceAccountName: orchestrator
 
 A service account provides an identity for the processes that run in a Pod.
 
-When you access the cluster, you are authenticated by the apiserver as a particular User Account. Processes in containers inside pod can also contact the apiserver. When you are authenticated as a particular Service Account.
+When you access the cluster, you are authenticated by the API server as a particular User Account. Processes in containers inside pod can also contact the API server. When you are authenticated as a particular Service Account.
 
 When you create a pod, if you do not create a service account, it is automatically assigned the default service account in the namespace.
 
@@ -492,7 +496,7 @@ You can specify `maxUnavailable` and `minAvailable` in a `PodDisruptionBudget`.
 
 With `minAvailable` of 1, evictions are allowed as long as they leave behind 1 or more healthy pods of the total number of desired replicas.
 
-With `maxAvailable` of 1, evictions are allowed as long as atmost 1 unhealthy replica among the total number of desired replicas.
+With `maxAvailable` of 1, evictions are allowed as long as at most 1 unhealthy replica among the total number of desired replicas.
 
 ### Application metrics Envoy Configurations
 
@@ -502,11 +506,11 @@ envoyproxy:
   configMapName: ""
   resources:
     limits:
-      cpu: 50m
-      memory: 50Mi
+      cpu: "50m"
+      memory: "50Mi"
     requests:
-      cpu: 50m
-      memory: 50Mi
+      cpu: "50m"
+      memory: "50Mi"
 ```
 
 Envoy is attached as a sidecar to the application container to collect metrics like 4XX, 5XX, Throughput and latency. You can now configure the envoy settings such as idleTimeout, resources etc.
@@ -574,4 +578,26 @@ If you want to see application metrics like different HTTP status codes metrics,
 ![](../../.gitbook/assets/deployment_application_metrics%20%282%29.png)
 
 Once all the Deployment template configurations are done, click on `Save` to save your deployment configuration. Now you are ready to create [Workflow](workflow/) to do CI/CD.
+
+### Helm Chart Json Schema Table
+
+Helm Chart json schema is used to validate the deployment template values.
+
+| Chart Version | Link |
+| :--- | :--- |
+| `reference-chart_3-12-0` | [Json Schema](../../../scripts/devtron-reference-helm-charts/reference-chart_3-12-0/schema.json) |
+| `reference-chart_3-11-0` | [Json Schema](../../../scripts/devtron-reference-helm-charts/reference-chart_3-11-0/schema.json) |
+| `reference-chart_3-10-0` | [Json Schema](../../../scripts/devtron-reference-helm-charts/reference-chart_3-10-0/schema.json) |
+| `reference-chart_3-9-0` | [Json Schema](../../../scripts/devtron-reference-helm-charts/reference-chart_3-9-0/schema.json) |
+
+
+### Other Validations in Json Schema
+
+The values of CPU and Memory in limits must be greater than or equal to in requests respectively. Similarly, In case of envoyproxy, the values of limits are greater than or equal to requests as mentioned below.
+```
+resources.limits.cpu >= resources.requests.cpu
+resources.limits.memory >= resources.requests.memory
+envoyproxy.resources.limits.cpu >= envoyproxy.resources.requests.cpu
+envoyproxy.resources.limits.memory >= envoyproxy.resources.requests.memory
+```
 
